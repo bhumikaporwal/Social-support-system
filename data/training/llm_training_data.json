@@ -1,0 +1,291 @@
+{
+  "training_conversations": [
+    {
+      "conversation_id": "conv_001",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Hello, I want to apply for financial support. Can you help me?"
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'd be happy to help you apply for financial support in the UAE. To get started, I need to understand your situation better. Are you a UAE resident with a valid Emirates ID?"
+        },
+        {
+          "role": "user",
+          "content": "Yes, I'm a UAE resident. What documents do I need?"
+        },
+        {
+          "role": "assistant",
+          "content": "Great! For financial support, you'll need these documents:\n\n**Required:**\n- Emirates ID (both sides)\n- Bank statements (last 3 months)\n- Resume or CV\n\n**Optional but helpful:**\n- Assets and liabilities statement\n- Credit report\n- Educational certificates\n\nAll documents should be clear and in PDF, image, or Excel format. Would you like me to explain the eligibility criteria as well?"
+        }
+      ],
+      "category": "application_process",
+      "tags": ["documents", "requirements", "getting_started"]
+    },
+    {
+      "conversation_id": "conv_002",
+      "messages": [
+        {
+          "role": "user",
+          "content": "What are the eligibility criteria for financial support?"
+        },
+        {
+          "role": "assistant",
+          "content": "For financial support eligibility in the UAE, you must meet these criteria:\n\n- Be a UAE resident with valid Emirates ID\n- Monthly income below 15,000 AED\n- Net worth less than 500,000 AED\n- Age between 18-65 years\n- Debt-to-income ratio below 60%\n\nIf your income is higher but below 25,000 AED, you might qualify for economic enablement support instead, which focuses on skills development and job placement. Would you like me to check which program suits you better?"
+        }
+      ],
+      "category": "eligibility",
+      "tags": ["criteria", "income_limits", "age_requirements"]
+    },
+    {
+      "conversation_id": "conv_003",
+      "messages": [
+        {
+          "role": "user",
+          "content": "How long does the application process take?"
+        },
+        {
+          "role": "assistant",
+          "content": "The application process is quite fast thanks to our AI-powered system:\n\n**Processing Time:** 3-5 minutes on average\n**Steps:**\n1. Document validation (30 seconds)\n2. Information extraction (1 minute)\n3. Eligibility assessment (1-2 minutes)\n4. Decision generation (30 seconds)\n\nMost applications (87%) are processed automatically. If your case needs human review, it may take 1-2 business days. You'll receive an email notification with your application status and ID number once processing is complete."
+        }
+      ],
+      "category": "process_timeline",
+      "tags": ["timing", "processing", "automation"]
+    },
+    {
+      "conversation_id": "conv_004",
+      "messages": [
+        {
+          "role": "user",
+          "content": "I'm unemployed and have been struggling financially. Can I apply?"
+        },
+        {
+          "role": "assistant",
+          "content": "I understand this is a difficult time for you, and I'm here to help. Yes, unemployment is actually one of the key situations where social support is designed to help.\n\nFor unemployed applicants:\n- Income requirement is waived or calculated based on savings/benefits\n- Focus shifts to assets and net worth evaluation\n- You may qualify for both financial support AND economic enablement programs\n- Economic enablement includes job training and placement assistance\n\nI'd recommend applying for 'Both' support types to maximize your assistance. The system will evaluate what you're eligible for. Would you like help starting your application?"
+        }
+      ],
+      "category": "special_situations",
+      "tags": ["unemployment", "financial_hardship", "both_programs"]
+    },
+    {
+      "conversation_id": "conv_005",
+      "messages": [
+        {
+          "role": "user",
+          "content": "What's the difference between financial support and economic enablement?"
+        },
+        {
+          "role": "assistant",
+          "content": "Great question! Here's the key difference:\n\n**Financial Support:**\n- Monthly cash assistance (typically 2,000-5,000 AED)\n- Duration: 3-12 months\n- For basic living expenses\n- Income limit: Below 15,000 AED/month\n\n**Economic Enablement:**\n- Skills training programs\n- Job placement assistance\n- Business development support\n- Training budget: Up to 10,000 AED\n- Income limit: Below 25,000 AED/month\n\n**Both Programs:**\n- You can apply for both simultaneously\n- Provides immediate financial relief + long-term career development\n- Most comprehensive support option\n\nWhich one sounds more suitable for your current situation?"
+        }
+      ],
+      "category": "program_differences",
+      "tags": ["financial_vs_economic", "program_types", "benefits"]
+    },
+    {
+      "conversation_id": "conv_006",
+      "messages": [
+        {
+          "role": "user",
+          "content": "My application was declined. What should I do?"
+        },
+        {
+          "role": "assistant",
+          "content": "I'm sorry to hear about the decline. Let's work together to understand what happened and explore your options:\n\n**First, check your decline reason:**\n- Log into the portal with your application ID\n- Review the specific reason provided\n\n**Common reasons and solutions:**\n- Income too high → Consider economic enablement instead\n- Missing documents → Resubmit with complete paperwork\n- Asset limit exceeded → Wait for asset value changes\n- Credit issues → Include explanation letter\n\n**Next steps:**\n1. You can appeal within 30 days\n2. Reapply after addressing the issue\n3. Contact human support for guidance\n\nWould you like me to help you understand your specific decline reason or start an appeal process?"
+        }
+      ],
+      "category": "application_issues",
+      "tags": ["declined", "appeal", "troubleshooting"]
+    },
+    {
+      "conversation_id": "conv_007",
+      "messages": [
+        {
+          "role": "user",
+          "content": "I'm having trouble uploading my Emirates ID. It keeps saying the file is too large."
+        },
+        {
+          "role": "assistant",
+          "content": "I can help you with that file upload issue! Here's what you can try:\n\n**File Size Solutions:**\n- Maximum file size is 10MB\n- Use a photo compression app or website\n- Take a new photo with lower resolution\n- Save as JPEG instead of PNG for smaller size\n\n**Photo Quality Tips:**\n- Ensure good lighting, avoid shadows\n- Capture both sides of the Emirates ID clearly\n- Make sure all text is readable\n- Avoid glare or reflections\n\n**Alternative formats:**\n- PDF, JPG, JPEG, PNG all accepted\n- Scan if you have a scanner available\n\nIf you're still having issues, you can email the documents to support@uae.gov.ae with your application reference. Would you like me to guide you through compressing the image?"
+        }
+      ],
+      "category": "technical_support",
+      "tags": ["file_upload", "emirates_id", "technical_issues"]
+    },
+    {
+      "conversation_id": "conv_008",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Can my family members apply separately?"
+        },
+        {
+          "role": "assistant",
+          "content": "Yes, eligible family members can apply separately, but there are some important considerations:\n\n**Individual Applications:**\n- Each adult (18+) must submit their own application\n- Separate Emirates ID and documents required\n- Each person's income and assets evaluated individually\n\n**Family Considerations:**\n- Household income may be considered in assessment\n- Shared assets (like family home) count for all applicants\n- System prevents duplicate support for same household expenses\n\n**Recommendation:**\n- Apply for the primary breadwinner first\n- Others can apply for economic enablement programs\n- Coordinate timing to avoid conflicts in assessment\n\nFor married couples, typically one spouse applies for financial support while the other might focus on economic enablement. Would you like help determining the best strategy for your family?"
+        }
+      ],
+      "category": "family_applications",
+      "tags": ["family", "multiple_applications", "household"]
+    },
+    {
+      "conversation_id": "conv_009",
+      "messages": [
+        {
+          "role": "user",
+          "content": "What training programs are available through economic enablement?"
+        },
+        {
+          "role": "assistant",
+          "content": "Excellent question! The economic enablement program offers various training paths:\n\n**Digital Skills:**\n- Data Analysis & Excel\n- Digital Marketing\n- Web Development basics\n- E-commerce setup\n\n**Professional Development:**\n- Project Management\n- Customer Service Excellence\n- Leadership & Communication\n- Financial Planning\n\n**Technical Training:**\n- IT Support & Hardware\n- Mobile App Development\n- Graphic Design\n- Content Creation\n\n**Business Development:**\n- Entrepreneurship basics\n- Small business setup\n- Market research\n- Financial management for business\n\n**Duration:** 2-6 months per program\n**Budget:** Up to 10,000 AED for training costs\n**Job Placement:** 85% placement rate within 6 months\n\nThe system will recommend programs based on your background and interests from your resume. Which area interests you most?"
+        }
+      ],
+      "category": "training_programs",
+      "tags": ["economic_enablement", "skills_training", "job_placement"]
+    },
+    {
+      "conversation_id": "conv_010",
+      "messages": [
+        {
+          "role": "user",
+          "content": "I have debt issues. Will this affect my application?"
+        },
+        {
+          "role": "assistant",
+          "content": "Having debt doesn't automatically disqualify you, but it's part of the assessment. Here's how debt is evaluated:\n\n**Key Metrics:**\n- Debt-to-income ratio (should be below 60%)\n- Payment history and current status\n- Type of debt (secured vs unsecured)\n\n**Positive Factors:**\n- Regular payment history\n- Debt consolidation efforts\n- Secured debts (car/home loans)\n\n**Concerning Factors:**\n- High credit card debt\n- Missed payments or defaults\n- Debt-to-income above 70%\n\n**Tips to Improve Your Application:**\n- Include a debt management plan\n- Show efforts to reduce debt\n- Provide explanation for any missed payments\n- Consider debt counseling first if ratio is very high\n\nThe goal is to ensure support helps rather than worsens your financial situation. Would you like help calculating your debt-to-income ratio?"
+        }
+      ],
+      "category": "financial_assessment",
+      "tags": ["debt", "credit_issues", "financial_planning"]
+    }
+  ],
+  "faq_data": [
+    {
+      "question": "Who is eligible for UAE social support?",
+      "answer": "UAE residents with valid Emirates ID, aged 18-65, with monthly income below 15,000 AED (financial support) or 25,000 AED (economic enablement), and net worth under 500,000 AED.",
+      "category": "eligibility"
+    },
+    {
+      "question": "What documents do I need to apply?",
+      "answer": "Required: Emirates ID (both sides), bank statements (3 months), resume/CV. Optional: assets/liabilities statement, credit report, educational certificates.",
+      "category": "documents"
+    },
+    {
+      "question": "How long does processing take?",
+      "answer": "Most applications are processed automatically in 3-5 minutes. Complex cases requiring human review may take 1-2 business days.",
+      "category": "processing"
+    },
+    {
+      "question": "Can I apply for both financial support and economic enablement?",
+      "answer": "Yes! You can apply for both programs simultaneously. The system will evaluate your eligibility for each program separately.",
+      "category": "programs"
+    },
+    {
+      "question": "What if my application is declined?",
+      "answer": "You can appeal within 30 days, reapply after addressing the decline reason, or contact human support for guidance.",
+      "category": "troubleshooting"
+    },
+    {
+      "question": "How much financial support can I receive?",
+      "answer": "Financial support typically ranges from 2,000-5,000 AED per month for 3-12 months, depending on your needs assessment.",
+      "category": "benefits"
+    },
+    {
+      "question": "What training programs are available?",
+      "answer": "Digital skills, professional development, technical training, and business development programs. Budget up to 10,000 AED with 85% job placement rate.",
+      "category": "training"
+    },
+    {
+      "question": "Can family members apply separately?",
+      "answer": "Yes, but household income and shared assets are considered. Coordinate applications to avoid assessment conflicts.",
+      "category": "family"
+    },
+    {
+      "question": "Will debt affect my application?",
+      "answer": "Debt is evaluated but doesn't automatically disqualify you. Keep debt-to-income ratio below 60% and maintain good payment history.",
+      "category": "financial"
+    },
+    {
+      "question": "How do I check my application status?",
+      "answer": "Use your application ID and Emirates ID in the status checker, or check your email for updates.",
+      "category": "status"
+    }
+  ],
+  "context_examples": [
+    {
+      "context": {
+        "application_status": "submitted",
+        "current_step": "document_validation",
+        "documents_uploaded": ["emirates_id", "bank_statement"],
+        "missing_documents": ["resume"]
+      },
+      "user_input": "What's happening with my application?",
+      "expected_response": "Your application is currently in the document validation phase. I can see you've uploaded your Emirates ID and bank statement, but you're still missing your resume/CV. Once you upload that, the system will proceed to information extraction and eligibility assessment."
+    },
+    {
+      "context": {
+        "application_status": "approved",
+        "decision": "approved_financial_support",
+        "monthly_amount": 3500,
+        "duration": 6
+      },
+      "user_input": "Tell me about my approval",
+      "expected_response": "Congratulations! Your application has been approved for financial support. You'll receive 3,500 AED per month for 6 months. The first payment should arrive within 5-7 business days to your registered bank account."
+    },
+    {
+      "context": {
+        "application_status": "declined",
+        "decline_reason": "income_too_high",
+        "monthly_income": 18000
+      },
+      "user_input": "Why was I declined?",
+      "expected_response": "Your application was declined because your monthly income of 18,000 AED exceeds the financial support limit of 15,000 AED. However, you may be eligible for economic enablement programs which have an income limit of 25,000 AED. Would you like me to help you apply for that instead?"
+    }
+  ],
+  "system_prompts": [
+    {
+      "version": "v1_concise",
+      "prompt": "You are a helpful AI assistant for UAE Social Support applications. Guide users through applications, explain eligibility, help with documents, and provide clear information about the process. Be professional, empathetic, and helpful. If unsure, direct to human support."
+    },
+    {
+      "version": "v2_detailed",
+      "prompt": "You are an AI assistant for the UAE Social Support Department. Your role: 1) Guide applicants through the application process, 2) Answer eligibility and document questions, 3) Explain application status and decisions, 4) Offer economic enablement resources, 5) Maintain professional, empathetic tone. Always be patient with applicants who may be in difficult situations."
+    }
+  ],
+  "training_scenarios": [
+    {
+      "scenario": "first_time_applicant",
+      "description": "User who has never applied before and needs complete guidance",
+      "key_points": ["explain process step by step", "list required documents", "set expectations for timeline", "offer encouragement"]
+    },
+    {
+      "scenario": "technical_difficulties",
+      "description": "User experiencing website or upload issues",
+      "key_points": ["troubleshoot specific issue", "provide alternative methods", "give contact information", "be patient and understanding"]
+    },
+    {
+      "scenario": "borderline_eligibility",
+      "description": "User whose income/assets are close to limits",
+      "key_points": ["explain thresholds clearly", "suggest economic enablement alternative", "mention appeal process", "provide hope and alternatives"]
+    },
+    {
+      "scenario": "urgent_financial_need",
+      "description": "User in immediate financial distress",
+      "key_points": ["prioritize fast processing", "explain emergency procedures", "provide additional resources", "show empathy and urgency"]
+    },
+    {
+      "scenario": "language_barrier",
+      "description": "User who may not be fluent in English",
+      "key_points": ["use simple, clear language", "avoid technical jargon", "repeat important information", "offer Arabic support options"]
+    }
+  ],
+  "metadata": {
+    "version": "1.0",
+    "created_date": "2024-01-15",
+    "total_conversations": 10,
+    "total_faq_entries": 10,
+    "categories": ["eligibility", "documents", "processing", "programs", "troubleshooting", "benefits", "training", "family", "financial", "status"],
+    "languages_supported": ["en", "ar"],
+    "use_case": "UAE Social Support System Chatbot Training"
+  }
+}

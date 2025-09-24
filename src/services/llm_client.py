@@ -229,24 +229,11 @@ class SocialSupportChatbot:
 
     def _get_system_prompt(self) -> str:
         """Get the system prompt for the social support chatbot"""
-        return """You are a helpful and compassionate AI assistant for the UAE Social Support Department. Your role is to:
+        return """You are a helpful AI assistant for UAE Social Support applications.
 
-1. Guide applicants through the social support application process
-2. Answer questions about eligibility criteria and required documents
-3. Provide clear explanations about application status and decisions
-4. Offer support and resources for economic enablement
-5. Maintain a professional, empathetic, and culturally sensitive tone
+Your role: Guide users through applications, explain eligibility, help with documents, and provide clear information about the process.
 
-Key Guidelines:
-- Be patient and understanding with applicants who may be in difficult situations
-- Provide accurate information about UAE social support programs
-- Guide users to upload the correct documents (Emirates ID, bank statements, resume, etc.)
-- Explain the automated assessment process transparently
-- Offer encouragement and support throughout the process
-- Respect privacy and confidentiality
-- If you cannot answer a question, direct them to human support
-
-Remember: You are helping people access critical social support services. Be kind, clear, and helpful."""
+Be professional, empathetic, and helpful. If unsure, direct to human support."""
 
     async def chat(
         self,
@@ -255,11 +242,21 @@ Remember: You are helping people access critical social support services. Be kin
     ) -> str:
         """Process a chat message and return response"""
         try:
+            # Add randomness to the user message processing
+            import random
+
             # Add user message to history
             self.conversation_history.append(ChatMessage(role="user", content=user_message))
 
-            # Prepare messages for LLM
-            messages = [ChatMessage(role="system", content=self.system_prompt)]
+            # Prepare messages for LLM with slight variations
+            system_variations = [
+                self.system_prompt,
+                f"{self.system_prompt}\n\nFocus on being particularly helpful and detailed in your response.",
+                f"{self.system_prompt}\n\nProvide practical examples when possible.",
+                f"{self.system_prompt}\n\nBe conversational and engaging in your response."
+            ]
+
+            messages = [ChatMessage(role="system", content=random.choice(system_variations))]
 
             # Add context if provided
             if context:
@@ -269,10 +266,13 @@ Remember: You are helping people access critical social support services. Be kin
             # Add conversation history (keep last 10 exchanges to manage context length)
             messages.extend(self.conversation_history[-20:])
 
+            # Vary temperature slightly for each request
+            temp_variation = random.uniform(0.7, 0.9)
+
             # Get LLM response
             response = await self.llm_client.chat_completion(
                 messages=messages,
-                temperature=0.3,  # Slightly higher for more natural responses
+                temperature=temp_variation,  # Variable temperature for more varied responses
                 max_tokens=1500
             )
 
@@ -294,11 +294,20 @@ Remember: You are helping people access critical social support services. Be kin
     ) -> AsyncGenerator[str, None]:
         """Stream chat response for real-time interaction"""
         try:
+            import random
+
             # Add user message to history
             self.conversation_history.append(ChatMessage(role="user", content=user_message))
 
-            # Prepare messages
-            messages = [ChatMessage(role="system", content=self.system_prompt)]
+            # Prepare messages with variations
+            system_variations = [
+                self.system_prompt,
+                f"{self.system_prompt}\n\nFocus on being particularly helpful and detailed in your response.",
+                f"{self.system_prompt}\n\nProvide practical examples when possible.",
+                f"{self.system_prompt}\n\nBe conversational and engaging in your response."
+            ]
+
+            messages = [ChatMessage(role="system", content=random.choice(system_variations))]
 
             if context:
                 context_message = self._format_context(context)
@@ -306,11 +315,14 @@ Remember: You are helping people access critical social support services. Be kin
 
             messages.extend(self.conversation_history[-20:])
 
+            # Variable temperature
+            temp_variation = random.uniform(0.7, 0.9)
+
             # Stream response
             full_response = ""
             async for chunk in self.llm_client.stream_chat_completion(
                 messages=messages,
-                temperature=0.3,
+                temperature=temp_variation,
                 max_tokens=1500
             ):
                 full_response += chunk
@@ -390,5 +402,5 @@ Remember: You are helping people access critical social support services. Be kin
             ChatMessage(role="user", content=guidance_prompt)
         ]
 
-        response = await self.llm_client.chat_completion(messages=messages, temperature=0.1)
+        response = await self.llm_client.chat_completion(messages=messages, temperature=0.7)
         return response.content

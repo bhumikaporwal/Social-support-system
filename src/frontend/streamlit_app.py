@@ -448,49 +448,17 @@ def chat_page():
         # Add user message
         st.session_state.conversation.append({"role": "user", "content": user_input})
 
-        # Get AI response (mock for demo)
+        # Get AI response using actual LLM
         with st.chat_message("assistant"):
             with st.spinner("Thinking..."):
-                # Mock AI response
-                if "eligibility" in user_input.lower():
-                    response = """For financial support eligibility in the UAE, you must meet these criteria:
-
-- Be a UAE resident with valid Emirates ID
-- Monthly income below 15,000 AED
-- Net worth less than 500,000 AED
-- Age between 18-65 years
-- Debt-to-income ratio below 60%
-
-For economic enablement support, the income threshold is higher (25,000 AED) and focuses on skills development and job placement."""
-
-                elif "documents" in user_input.lower():
-                    response = """You'll need to upload these documents:
-
-**Required:**
-- Emirates ID (both sides)
-- Bank statements (last 3 months)
-- Resume/CV
-
-**Optional but helpful:**
-- Assets and liabilities statement
-- Credit report
-- Educational certificates
-
-All documents should be clear and in PDF, image, or Excel format."""
-
-                else:
-                    response = """I'm here to help you with your social support application! I can provide information about:
-
-- Eligibility criteria
-- Required documents
-- Application process
-- Processing timelines
-- Support programs available
-- Troubleshooting common issues
-
-What would you like to know more about?"""
-
-                st.write(response)
+                try:
+                    # Use actual chatbot instead of mock responses
+                    response = asyncio.run(st.session_state.chatbot.chat(user_input))
+                    st.write(response)
+                except Exception as e:
+                    st.error(f"Error getting response: {str(e)}")
+                    response = "I apologize, but I'm experiencing technical difficulties. Please try again."
+                    st.write(response)
 
         # Add AI response to conversation
         st.session_state.conversation.append({"role": "assistant", "content": response})
