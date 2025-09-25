@@ -1,0 +1,14 @@
+{
+  "total_applications": 100,
+  "profile_distribution": {
+    "eligible": 59,
+    "borderline": 22,
+    "high_income": 19
+  },
+  "support_type_distribution": {
+    "financial": 29,
+    "economic_enablement": 42,
+    "both": 29
+  },
+  "generation_date": "2025-09-25T08:45:33.521068"
+}

@@ -1,7 +1,13 @@
 {
   "permissions": {
     "allow": [
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(sc query:*)",
+      "Bash(findstr:*)",
+      "Bash(where psql)",
+      "Bash(where docker)",
+      "Bash(docker-compose up:*)",
+      "Bash(docker compose:*)"
     ],
     "deny": [],
     "ask": []

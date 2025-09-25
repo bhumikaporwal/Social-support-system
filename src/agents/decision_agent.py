@@ -92,6 +92,8 @@ class DecisionRecommendationAgent(BaseAgent):
                                  extracted_data: Dict[str, Any],
                                  support_type: str) -> Dict[str, Any]:
         """Analyze all factors that influence the decision"""
+        validated_data = validation_data.get('validated_data', {})
+
         factors = {
             'eligibility_score': eligibility_data.get('combined_score', 0.5),
             'rule_based_eligible': eligibility_data.get('rule_based_eligible', False),
@@ -104,7 +106,9 @@ class DecisionRecommendationAgent(BaseAgent):
                 if issue.get('severity') == 'error'
             ]),
             'document_quality': self._assess_document_quality(extracted_data),
-            'financial_need_level': self._assess_financial_need(validation_data.get('validated_data', {})),
+            'financial_need_level': self._assess_financial_need(validated_data),
+            'validated_data': validated_data,  # Include validated data for calculations
+            'validation_result': validation_data,  # Include full validation result
             'support_type': support_type
         }
 
@@ -162,13 +166,57 @@ class DecisionRecommendationAgent(BaseAgent):
         critical_errors = factors['critical_validation_errors']
         document_quality = factors['document_quality']
         validation_confidence = factors['validation_confidence']
+        risk_level = factors['risk_level']
+        validated_data = factors.get('validated_data', {})
+
+        # Critical rejection scenarios
+        monthly_income = validated_data.get('monthly_income', 0)
+        net_worth = validated_data.get('net_worth', 0)
+        age = validated_data.get('age', 0)
+        debt_ratio = validated_data.get('debt_to_income_ratio', 0)
 
         # Cannot approve if critical validation errors exist
         if critical_errors > 0:
             return {
                 'decision': 'decline',
-                'reason': 'Critical validation errors found',
+                'reason': 'Critical validation errors in submitted documents',
                 'confidence': 0.9,
+                'requires_manual_review': False
+            }
+
+        # Age eligibility check
+        if age < 18 or age > 65:
+            return {
+                'decision': 'decline',
+                'reason': f'Age ({age}) outside eligible range (18-65 years)',
+                'confidence': 0.95,
+                'requires_manual_review': False
+            }
+
+        # Income too high for financial support
+        if monthly_income > 25000:
+            return {
+                'decision': 'decline',
+                'reason': f'Monthly income ({monthly_income:,} AED) exceeds maximum threshold (25,000 AED)',
+                'confidence': 0.9,
+                'requires_manual_review': False
+            }
+
+        # Net worth too high
+        if net_worth > 500000:
+            return {
+                'decision': 'decline',
+                'reason': f'Net worth ({net_worth:,} AED) exceeds maximum threshold (500,000 AED)',
+                'confidence': 0.9,
+                'requires_manual_review': False
+            }
+
+        # Excessive debt burden
+        if debt_ratio > 0.8:
+            return {
+                'decision': 'decline',
+                'reason': f'Debt-to-income ratio ({debt_ratio:.1%}) indicates unsustainable debt burden',
+                'confidence': 0.85,
                 'requires_manual_review': False
             }
 
@@ -176,18 +224,43 @@ class DecisionRecommendationAgent(BaseAgent):
         if not rule_based_eligible:
             return {
                 'decision': 'decline',
-                'reason': 'Does not meet basic eligibility criteria',
+                'reason': 'Does not meet basic eligibility criteria for requested support type',
                 'confidence': 0.8,
                 'requires_manual_review': False
             }
 
+        # High risk with low income might need manual review
+        if risk_level == 'High' and monthly_income < 3000:
+            return {
+                'decision': 'manual_review',
+                'reason': 'High-risk profile with very low income requires manual assessment',
+                'confidence': 0.6,
+                'requires_manual_review': True
+            }
+
         # Document quality check
-        if document_quality < 0.5:
+        if document_quality < 0.4:
+            return {
+                'decision': 'decline',
+                'reason': 'Document quality insufficient for verification',
+                'confidence': 0.8,
+                'requires_manual_review': False
+            }
+        elif document_quality < 0.6:
             return {
                 'decision': 'manual_review',
                 'reason': 'Poor document quality requires manual verification',
                 'confidence': 0.7,
                 'requires_manual_review': True
+            }
+
+        # Low validation confidence
+        if validation_confidence < 0.5:
+            return {
+                'decision': 'decline',
+                'reason': 'Data validation confidence too low for automated processing',
+                'confidence': 0.75,
+                'requires_manual_review': False
             }
 
         # Decision based on combined score and thresholds
@@ -227,7 +300,11 @@ class DecisionRecommendationAgent(BaseAgent):
                                   support_type: str) -> Dict[str, Any]:
         """Calculate specific support amounts and details if approved"""
         if recommendation['decision'] in ['decline']:
-            return {}
+            return {
+                'financial_support': None,
+                'economic_enablement': None,
+                'decline_reason': recommendation.get('reason', 'Application does not meet eligibility requirements')
+            }
 
         details = {}
         limits = self.approval_limits
@@ -235,36 +312,71 @@ class DecisionRecommendationAgent(BaseAgent):
         need_level = factors.get('financial_need_level', 'moderate')
         eligibility_score = factors.get('eligibility_score', 0.5)
 
+        # Get validated data for more precise calculations
+        validated_data = factors.get('validated_data', {})
+        if not validated_data:
+            # Extract from input data if not in factors
+            input_validation_data = factors.get('validation_result', {})
+            validated_data = input_validation_data.get('validated_data', {})
+
+        monthly_income = validated_data.get('monthly_income', 0)
+        family_size = validated_data.get('family_size', 1)
+        dependents = validated_data.get('dependents', 0)
+
         # Financial Support Calculation
         if support_type in ['financial', 'both']:
             financial_limits = limits['financial_support']
 
-            # Base amount based on need level
-            need_multipliers = {
-                'critical': 1.0,
-                'high': 0.8,
-                'moderate': 0.6,
-                'low': 0.4
-            }
+            # Calculate poverty gap and need-based amount
+            per_capita_income = monthly_income / family_size if family_size > 0 else monthly_income
+            poverty_line = 2000  # AED per person per month
+            basic_living_cost = 3500  # AED per person per month
 
-            base_amount = financial_limits['monthly_amount_range'][1] * need_multipliers.get(need_level, 0.6)
+            # Calculate support based on income gap and family composition
+            if need_level == 'critical':
+                # Full gap coverage up to maximum
+                income_gap = max(0, (basic_living_cost * family_size) - monthly_income)
+                base_amount = min(income_gap, financial_limits['monthly_amount_range'][1])
+            elif need_level == 'high':
+                # 80% gap coverage
+                income_gap = max(0, (poverty_line * family_size) - monthly_income) * 0.8
+                base_amount = min(income_gap, financial_limits['monthly_amount_range'][1] * 0.8)
+            elif need_level == 'moderate':
+                # Fixed moderate amount based on family size
+                base_amount = min(1500 + (dependents * 500), financial_limits['monthly_amount_range'][1] * 0.6)
+            else:
+                # Low need gets minimal support
+                base_amount = financial_limits['monthly_amount_range'][0]
 
             # Adjust based on eligibility score
-            score_multiplier = min(eligibility_score * 1.2, 1.0)
-            monthly_amount = base_amount * score_multiplier
+            score_multiplier = max(0.5, min(eligibility_score * 1.1, 1.0))
+            monthly_amount = max(financial_limits['monthly_amount_range'][0], base_amount * score_multiplier)
 
-            # Determine duration
-            duration = financial_limits['duration_months_range'][1] if need_level == 'critical' else financial_limits['duration_months_range'][0]
+            # Determine duration based on need and risk level
+            if need_level == 'critical' and factors.get('risk_level') != 'High':
+                duration = financial_limits['duration_months_range'][1]
+            elif need_level in ['critical', 'high']:
+                duration = max(6, financial_limits['duration_months_range'][1] - 2)
+            else:
+                duration = financial_limits['duration_months_range'][0]
 
+            # Conditional approval adjustments
             if recommendation['decision'] == 'conditional_approve':
-                monthly_amount *= 0.7  # Reduce amount for conditional approval
+                monthly_amount *= 0.75  # Reduce amount for conditional approval
                 duration = min(duration, 6)  # Limit duration
+
+            # Manual review cases get reduced initial amounts
+            elif recommendation['decision'] == 'manual_review':
+                monthly_amount *= 0.6
+                duration = 3  # Short initial period
 
             details['financial_support'] = {
                 'monthly_amount': round(monthly_amount, 2),
                 'duration_months': duration,
                 'total_amount': round(monthly_amount * duration, 2),
                 'payment_schedule': 'monthly',
+                'per_capita_income': round(per_capita_income, 2),
+                'need_level': need_level,
                 'conditions': self._generate_financial_conditions(recommendation, factors)
             }
 
@@ -272,15 +384,44 @@ class DecisionRecommendationAgent(BaseAgent):
         if support_type in ['economic_enablement', 'both']:
             enablement_limits = limits['economic_enablement']
 
-            training_budget = enablement_limits['training_budget']
+            # Calculate training budget based on profile and need
+            base_budget = enablement_limits['training_budget']
+
+            # Adjust budget based on education and experience level
+            education_level = validated_data.get('education_level', 'High School')
+            experience_years = validated_data.get('experience_years', 0)
+
+            if education_level in ['Bachelor\'s Degree', 'Master\'s Degree', 'PhD']:
+                # Higher education gets advanced training budget
+                training_budget = base_budget * 1.2
+                duration_months = 8
+            elif education_level in ['Diploma', 'Technical Certificate']:
+                # Technical background gets specialized training
+                training_budget = base_budget
+                duration_months = 6
+            else:
+                # Basic education gets foundational training
+                training_budget = base_budget * 0.8
+                duration_months = 9  # Longer duration for basic training
+
+            # Adjust based on eligibility score and recommendation
             if recommendation['decision'] == 'conditional_approve':
-                training_budget *= 0.8
+                training_budget *= 0.75
+                duration_months = min(duration_months, 6)
+            elif recommendation['decision'] == 'manual_review':
+                training_budget *= 0.6
+                duration_months = 4
+
+            # Determine training programs and placement probability
+            recommended_programs = self._recommend_training_programs(factors, validated_data)
+            job_placement_support = self._calculate_placement_support(factors, validated_data)
 
             details['economic_enablement'] = {
-                'training_budget': training_budget,
-                'duration_months': enablement_limits['duration_months'],
-                'job_placement_support': enablement_limits['job_placement_support'],
-                'recommended_programs': self._recommend_training_programs(factors),
+                'training_budget': round(training_budget, 2),
+                'duration_months': duration_months,
+                'job_placement_support': job_placement_support,
+                'recommended_programs': recommended_programs,
+                'placement_probability': self._estimate_placement_probability(validated_data),
                 'conditions': self._generate_enablement_conditions(recommendation, factors)
             }
 
@@ -314,21 +455,133 @@ class DecisionRecommendationAgent(BaseAgent):
 
         return conditions
 
-    def _recommend_training_programs(self, factors: Dict[str, Any]) -> List[str]:
+    def _recommend_training_programs(self, factors: Dict[str, Any], validated_data: Dict[str, Any] = None) -> List[str]:
         """Recommend specific training programs based on profile"""
         programs = []
 
-        # This would integrate with a job market analysis system
-        # For demo, provide basic recommendations
+        if not validated_data:
+            validated_data = {}
 
-        if factors.get('financial_need_level') in ['critical', 'high']:
-            programs.append("Fast-track vocational certification")
-            programs.append("Digital skills bootcamp")
+        education_level = validated_data.get('education_level', 'High School')
+        experience_years = validated_data.get('experience_years', 0)
+        employment_status = validated_data.get('employment_status', 'Unemployed')
+        age = validated_data.get('age', 30)
 
-        programs.append("Entrepreneurship development program")
-        programs.append("Financial literacy course")
+        # High-demand tech programs for younger candidates
+        if age <= 35 and education_level in ['Bachelor\'s Degree', 'Master\'s Degree', 'PhD']:
+            programs.extend([
+                "Advanced Data Analytics Certification",
+                "Cloud Computing (AWS/Azure) Training",
+                "Digital Marketing Professional",
+                "Full-Stack Web Development"
+            ])
 
-        return programs
+        # Mid-level technical programs
+        elif education_level in ['Diploma', 'Technical Certificate'] or (experience_years > 2 and age <= 45):
+            programs.extend([
+                "Digital Skills Bootcamp",
+                "Project Management Professional (PMP)",
+                "Customer Service Excellence",
+                "Digital Administration"
+            ])
+
+        # Entry-level and foundational programs
+        else:
+            programs.extend([
+                "Basic Computer Literacy",
+                "Retail and Sales Training",
+                "Food Service Certification",
+                "Administrative Assistant Training"
+            ])
+
+        # Add financial literacy for everyone
+        programs.append("Financial Literacy and Money Management")
+
+        # Entrepreneurship for those with experience
+        if experience_years > 3 or factors.get('financial_need_level') in ['moderate', 'low']:
+            programs.append("Small Business Development Program")
+
+        return programs[:3]  # Return top 3 recommendations
+
+    def _calculate_placement_support(self, factors: Dict[str, Any], validated_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Calculate job placement support level"""
+        education_level = validated_data.get('education_level', 'High School')
+        experience_years = validated_data.get('experience_years', 0)
+        age = validated_data.get('age', 30)
+
+        # Determine placement support level
+        if education_level in ['Bachelor\'s Degree', 'Master\'s Degree', 'PhD'] and experience_years > 2:
+            support_level = "Premium"
+            services = [
+                "Personal career counseling",
+                "Executive job matching",
+                "Interview coaching",
+                "Salary negotiation support",
+                "Professional networking events"
+            ]
+        elif education_level in ['Diploma', 'Technical Certificate'] or experience_years > 1:
+            support_level = "Standard"
+            services = [
+                "Job matching service",
+                "Resume writing assistance",
+                "Interview preparation",
+                "Skills assessment",
+                "Job fair invitations"
+            ]
+        else:
+            support_level = "Basic"
+            services = [
+                "Job search training",
+                "Basic resume help",
+                "Employment orientation",
+                "On-the-job training placement"
+            ]
+
+        return {
+            "support_level": support_level,
+            "services_included": services,
+            "guaranteed_interviews": 3 if support_level == "Premium" else 2 if support_level == "Standard" else 1
+        }
+
+    def _estimate_placement_probability(self, validated_data: Dict[str, Any]) -> str:
+        """Estimate job placement probability"""
+        education_level = validated_data.get('education_level', 'High School')
+        experience_years = validated_data.get('experience_years', 0)
+        age = validated_data.get('age', 30)
+
+        score = 0.5  # Base probability
+
+        # Education factor
+        if education_level in ['Master\'s Degree', 'PhD']:
+            score += 0.3
+        elif education_level == 'Bachelor\'s Degree':
+            score += 0.2
+        elif education_level in ['Diploma', 'Technical Certificate']:
+            score += 0.1
+
+        # Experience factor
+        if experience_years > 5:
+            score += 0.2
+        elif experience_years > 2:
+            score += 0.1
+
+        # Age factor (market preference)
+        if 25 <= age <= 45:
+            score += 0.1
+        elif age > 50:
+            score -= 0.1
+
+        # Convert to percentage and categorize
+        probability = min(0.95, max(0.15, score))
+
+        if probability >= 0.8:
+            return "High (80%+)"
+        elif probability >= 0.6:
+            return "Good (60-79%)"
+        elif probability >= 0.4:
+            return "Moderate (40-59%)"
+        else:
+            return "Challenging (<40%)"
 
     async def _generate_decision_reasoning(self, recommendation: Dict[str, Any],
                                          factors: Dict[str, Any],

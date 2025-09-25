@@ -40,7 +40,7 @@ def start_api_server():
     cmd = [
         sys.executable, "-m", "uvicorn",
         "src.api.main:app",
-        "--host", "0.0.0.0",
+        "--host", "localhost",
         "--port", "8000",
         "--reload"
     ]
@@ -58,7 +58,7 @@ def start_streamlit_app():
         sys.executable, "-m", "streamlit", "run",
         "src/frontend/streamlit_app.py",
         "--server.port", "8501",
-        "--server.address", "0.0.0.0"
+        "--server.address", "localhost"
     ]
 
     return subprocess.Popen(cmd, env=env)
