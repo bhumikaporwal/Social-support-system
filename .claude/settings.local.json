@@ -7,7 +7,8 @@
       "Bash(where psql)",
       "Bash(where docker)",
       "Bash(docker-compose up:*)",
-      "Bash(docker compose:*)"
+      "Bash(docker compose:*)",
+      "Bash(dir:*)"
     ],
     "deny": [],
     "ask": []

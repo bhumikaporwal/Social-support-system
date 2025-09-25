@@ -1,275 +1,113 @@
-# 🇦🇪 UAE Social Support System - AI-Powered Application Processing
+# Social Support System
 
-## Overview
+A comprehensive AI-powered social support application that helps process applications for social services, perform eligibility assessments, and provide intelligent document analysis using multiple AI agents and machine learning models.
 
-An advanced AI-powered workflow automation system for the UAE Social Support Department that processes financial and economic enablement support applications with up to 99% automation and sub-minute processing times.
+## Table of Contents
 
-### 🎯 Key Features
+- [Prerequisites](#prerequisites)
+- [Installation Guide for Windows](#installation-guide-for-windows)
+- [Environment Setup](#environment-setup)
+- [Database Setup](#database-setup)
+- [Running the Application](#running-the-application)
+- [Docker Deployment](#docker-deployment)
+- [ML Model Training](#ml-model-training)
+- [API Documentation](#api-documentation)
+- [Troubleshooting](#troubleshooting)
+- [Project Structure](#project-structure)
 
-- **AI-Powered Document Processing**: Multimodal extraction from Emirates ID, bank statements, resumes, assets/liabilities files, and credit reports
-- **Intelligent Eligibility Assessment**: ML-based scoring combined with rule-based validation
-- **Automated Decision Making**: Real-time approval/decline recommendations with confidence scoring
-- **Economic Enablement Matching**: Personalized training and job placement recommendations
-- **Interactive AI Chatbot**: Real-time support and guidance throughout the application process
-- **Comprehensive Dashboard**: Analytics and monitoring for administrators
-- **Local LLM Processing**: Privacy-compliant processing using Ollama for data security
+## Prerequisites
 
-## 🏗️ Architecture
+Before installing the Social Support System on Windows, ensure you have the following installed:
 
-### System Components
+### Required Software
 
-```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Streamlit     │    │    FastAPI      │    │   AI Agents     │
-│   Frontend      │────│    Backend      │────│  Orchestration  │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-         │                       │                       │
-         │                       │                       │
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   AI Chatbot    │    │   Databases     │    │   Document      │
-│  (Ollama LLM)   │    │   Multi-Store   │    │   Processing    │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-```
+1. **Python 3.8 or higher**
+   - Download from [python.org](https://www.python.org/downloads/windows/)
+   - **Important**: During installation, check "Add Python to PATH"
+   - Verify installation: Open Command Prompt and run `python --version`
 
-### Database Architecture
+2. **Git for Windows**
+   - Download from [git-scm.com](https://git-scm.com/download/win)
+   - Use default installation settings
+   - Verify installation: `git --version`
 
-- **PostgreSQL**: Structured application data, user profiles, decisions
-- **MongoDB**: Document storage and unstructured data
-- **Qdrant**: Vector database for semantic search and RAG
-- **Neo4j**: Relationship mapping and fraud detection
+3. **Docker Desktop for Windows** (Optional - for containerized deployment)
+   - Download from [docker.com](https://docs.docker.com/desktop/install/windows-install/)
+   - Requires Windows 10/11 Pro, Enterprise, or Education
+   - Enable WSL 2 integration if prompted
 
-### AI Agent Ecosystem
+### Database Prerequisites (if not using Docker)
 
-1. **Document Extraction Agent**: Multimodal document processing
-2. **Data Validation Agent**: Cross-reference information validation
-3. **Eligibility Assessment Agent**: ML-based scoring and rule evaluation
-4. **Decision Recommendation Agent**: Final approval/decline decisions
-5. **Economic Enablement Agent**: Training and job matching recommendations
-6. **Master Orchestrator**: LangGraph-based workflow coordination
+4. **PostgreSQL 13+**
+   - Download from [postgresql.org](https://www.postgresql.org/download/windows/)
+   - During installation, remember the password you set for the postgres user
+   - Add PostgreSQL bin directory to PATH
 
-## 🚀 Quick Start
+5. **MongoDB Community Server**
+   - Download from [mongodb.com](https://www.mongodb.com/try/download/community)
+   - Install as a Windows Service (recommended)
 
-### Prerequisites
+6. **Redis** (Optional - for caching)
+   - Download from [github.com/microsoftarchive/redis/releases](https://github.com/microsoftarchive/redis/releases)
+   - Or use Docker: `docker run -d -p 6379:6379 redis:alpine`
 
-- Python 3.8+
-- Docker (for databases)
-- Ollama (for local LLM)
+### Optional but Recommended
 
-### Installation
+7. **Ollama for Windows** (for local LLM processing)
+   - Download from [ollama.ai](https://ollama.ai/download/windows)
+   - Required for AI chatbot functionality
 
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd Social-support-system
-   ```
+8. **Tesseract OCR** (for document OCR)
+   - Download from [github.com/UB-Mannheim/tesseract/wiki](https://github.com/UB-Mannheim/tesseract/wiki)
+   - Add to PATH: `C:\Program Files\Tesseract-OCR`
 
-2. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
+## Installation Guide for Windows
 
-3. **Set up environment**
-   ```bash
-   cp .env.example .env
-   # Edit .env with your configurations
-   ```
+### Step 1: Clone the Repository
 
-4. **Install and configure Ollama**
-   ```bash
-   # Install Ollama (visit https://ollama.ai for installation instructions)
-   ollama pull llama2:7b-chat
-   ```
+Open Command Prompt or PowerShell as Administrator and run:
 
-5. **Start databases using Docker**
-   ```bash
-   docker-compose up -d
-   ```
-
-6. **Run the application**
-   ```bash
-   python run_app.py --mode full
-   ```
-
-### Quick Setup (All-in-One)
-
-```bash
-# Setup environment and generate test data
-python run_app.py --mode setup
-
-# Start the complete application
-python run_app.py
+```cmd
+git clone https://github.com/your-username/Social-support-system.git
+cd Social-support-system
 ```
 
-## 📖 Detailed Setup Guide
+### Step 2: Create Python Virtual Environment
 
-### Database Configuration
-
-1. **PostgreSQL Setup**
-   ```bash
-   docker run -d \
-     --name social-support-postgres \
-     -e POSTGRES_DB=social_support_db \
-     -e POSTGRES_USER=postgres \
-     -e POSTGRES_PASSWORD=your_password \
-     -p 5432:5432 \
-     postgres:13
-   ```
-
-2. **MongoDB Setup**
-   ```bash
-   docker run -d \
-     --name social-support-mongo \
-     -p 27017:27017 \
-     mongo:5.0
-   ```
-
-3. **Qdrant Setup**
-   ```bash
-   docker run -d \
-     --name social-support-qdrant \
-     -p 6333:6333 \
-     qdrant/qdrant
-   ```
-
-4. **Neo4j Setup**
-   ```bash
-   docker run -d \
-     --name social-support-neo4j \
-     -p 7474:7474 -p 7687:7687 \
-     -e NEO4J_AUTH=neo4j/your_password \
-     neo4j:5.0
-   ```
-
-### Ollama LLM Configuration
-
-1. **Install Ollama**
-   - Visit [https://ollama.ai](https://ollama.ai) for platform-specific installation
-   - Or use Docker: `docker run -d -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama`
-
-2. **Download Models**
-   ```bash
-   ollama pull llama2:7b-chat
-   ollama pull mistral:7b  # Optional alternative model
-   ```
-
-3. **Verify Installation**
-   ```bash
-   curl http://localhost:11434/api/tags
-   ```
-
-## 🎯 Usage
-
-### Web Interface
-
-1. **Access the Application**
-   - Frontend: http://localhost:8501
-   - API Documentation: http://localhost:8000/docs
-   - API Redoc: http://localhost:8000/redoc
-
-2. **Submit New Application**
-   - Navigate to "New Application" page
-   - Fill in personal information
-   - Upload required documents
-   - Review and submit
-
-3. **Track Application Status**
-   - Use "Application Status" page
-   - Enter Application ID and Emirates ID
-   - View real-time processing status
-
-4. **AI Assistant**
-   - Access via "AI Assistant" page
-   - Ask questions about eligibility, documents, process
-   - Get personalized guidance
-
-### API Usage
-
-#### Create Applicant
-```bash
-curl -X POST "http://localhost:8000/api/applicants" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "emirates_id": "784-1988-1234567-8",
-    "first_name": "Ahmed",
-    "last_name": "Al Mansoori",
-    "date_of_birth": "1988-05-15",
-    "nationality": "UAE",
-    "gender": "Male",
-    "email": "ahmed@example.com",
-    "phone": "+971501234567",
-    "address": "Dubai, UAE",
-    "emirate": "Dubai"
-  }'
+```cmd
+python -m venv venv
+venv\Scripts\activate
 ```
 
-#### Submit Application
-```bash
-curl -X POST "http://localhost:8000/api/applications" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "applicant_id": 1,
-    "support_type": "both",
-    "monthly_income": 8000,
-    "employment_status": "employed",
-    "family_size": 4,
-    "dependents": 2
-  }'
+**Note**: You'll need to activate the virtual environment every time you work with the project:
+```cmd
+venv\Scripts\activate
 ```
 
-#### Check Application Status
-```bash
-curl "http://localhost:8000/api/status/APP-2024-001?emirates_id=784-1988-1234567-8"
+### Step 3: Install Python Dependencies
+
+```cmd
+python -m pip install --upgrade pip
+pip install -r requirements.txt
 ```
 
-### Command Line Interface
-
-```bash
-# Run only API server
-python run_app.py --mode api
-
-# Run only frontend
-python run_app.py --mode frontend
-
-# Generate test data only
-python run_app.py --mode data
-
-# Setup environment only
-python run_app.py --mode setup
+If you encounter any installation errors, try installing packages individually or use:
+```cmd
+pip install --no-cache-dir -r requirements.txt
 ```
 
-## 🧪 Testing
+## Environment Setup
 
-### Synthetic Data Generation
+### Step 1: Create Environment File
 
-Generate realistic test data for demonstration:
-
-```bash
-python data/synthetic/generate_test_data.py
+Copy the example environment file:
+```cmd
+copy .env.example .env
 ```
 
-This creates:
-- 100 synthetic applications
-- Complete document sets (Emirates ID, bank statements, resumes, etc.)
-- Varied profiles (eligible, borderline, high-income)
-- Realistic UAE-specific data
+### Step 2: Configure Environment Variables
 
-### Running Tests
-
-```bash
-# Run all tests
-pytest tests/
-
-# Run specific test categories
-pytest tests/test_agents.py
-pytest tests/test_document_processing.py
-pytest tests/test_api.py
-```
-
-## 📊 Configuration
-
-### Environment Variables
-
-Key configuration options in `.env`:
+Edit the `.env` file with your preferred text editor (Notepad, VS Code, etc.):
 
 ```env
 # Database Configuration
@@ -277,7 +115,7 @@ POSTGRES_HOST=localhost
 POSTGRES_PORT=5432
 POSTGRES_DB=social_support_db
 POSTGRES_USER=postgres
-POSTGRES_PASSWORD=your_password
+POSTGRES_PASSWORD=your_postgres_password
 
 MONGODB_URL=mongodb://localhost:27017
 MONGODB_DB=social_support_docs
@@ -287,266 +125,417 @@ QDRANT_PORT=6333
 
 NEO4J_URI=bolt://localhost:7687
 NEO4J_USER=neo4j
-NEO4J_PASSWORD=your_password
+NEO4J_PASSWORD=your_neo4j_password
 
-# Ollama Configuration
+# Ollama Configuration (for local LLM)
 OLLAMA_BASE_URL=http://localhost:11434
 OLLAMA_MODEL=llama2:7b-chat
 
-# Langfuse Configuration (Optional)
-LANGFUSE_SECRET_KEY=your_secret_key
-LANGFUSE_PUBLIC_KEY=your_public_key
-LANGFUSE_HOST=http://localhost:3000
+# OpenAI Configuration (alternative to Ollama)
+OPENAI_API_KEY=your_openai_api_key_here
 
 # Application Configuration
 API_HOST=localhost
 API_PORT=8000
 STREAMLIT_PORT=8501
-SECRET_KEY=your_secret_key_here
+SECRET_KEY=your-secret-key-here-change-this-in-production
+ENVIRONMENT=development
 
-# File Configuration
+# File Upload Configuration
 MAX_FILE_SIZE=50MB
 UPLOAD_DIR=./data/uploads
 TEMP_DIR=./data/temp
 ```
 
-### Eligibility Criteria Configuration
+## Database Setup
 
-Edit criteria in `src/agents/eligibility_agent.py`:
+### Option 1: Docker Database Setup (Recommended)
 
-```python
-eligibility_criteria = {
-    "financial_support": {
-        "max_monthly_income": 15000,  # AED
-        "max_net_worth": 500000,      # AED
-        "min_age": 18,
-        "max_age": 65,
-        "debt_to_income_ratio": 0.6   # Max 60%
-    },
-    "economic_enablement": {
-        "max_monthly_income": 25000,  # AED
-        "min_age": 18,
-        "max_age": 55
-    }
-}
+If you have Docker Desktop installed, this is the easiest option:
+
+```cmd
+# Start all databases at once
+docker-compose up postgres mongodb qdrant neo4j redis -d
+
+# Or start them individually
+docker run -d --name postgres -e POSTGRES_DB=social_support_db -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=your_password -p 5432:5432 postgres:13
+
+docker run -d --name mongodb -p 27017:27017 mongo:5.0
+
+docker run -d --name qdrant -p 6333:6333 qdrant/qdrant
+
+docker run -d --name neo4j -p 7474:7474 -p 7687:7687 -e NEO4J_AUTH=neo4j/your_password neo4j:5.0
+
+docker run -d --name redis -p 6379:6379 redis:alpine
 ```
 
-## 🔒 Security & Privacy
+### Option 2: Manual Database Setup on Windows
 
-### Data Protection
-- All document processing happens locally
-- No data sent to external APIs
-- Encrypted database connections
-- Secure file storage
-
-### Authentication & Authorization
-- JWT-based authentication (configurable)
-- Role-based access control
-- Audit logging for all decisions
-
-### Compliance
-- GDPR-compliant data handling
-- UAE data protection law compliance
-- Configurable data retention policies
-
-## 📈 Monitoring & Observability
-
-### Langfuse Integration (Optional)
-
-1. **Setup Langfuse**
-   ```bash
-   docker run -d \
-     --name langfuse \
-     -p 3000:3000 \
-     -e DATABASE_URL=postgresql://user:pass@host:5432/langfuse \
-     langfuse/langfuse
+#### PostgreSQL Setup
+1. Download and install PostgreSQL from [postgresql.org](https://www.postgresql.org/download/windows/)
+2. During installation, remember the password for the postgres user
+3. Open pgAdmin or psql command line
+4. Create database:
+   ```sql
+   CREATE DATABASE social_support_db;
    ```
 
-2. **Configure in .env**
-   ```env
-   LANGFUSE_SECRET_KEY=your_secret_key
-   LANGFUSE_PUBLIC_KEY=your_public_key
-   LANGFUSE_HOST=http://localhost:3000
+#### MongoDB Setup
+1. Install MongoDB Community Server
+2. MongoDB will start automatically as a Windows service
+3. No additional setup required - databases will be created automatically
+
+#### Neo4j Setup (Optional)
+1. Download Neo4j Desktop from [neo4j.com](https://neo4j.com/download/)
+2. Create a new project and database
+3. Set password and update `.env` file
+4. Access via browser: http://localhost:7474
+
+#### Qdrant Setup (Optional - for vector search)
+1. Use Docker: `docker run -d -p 6333:6333 qdrant/qdrant`
+2. Or download from [qdrant.tech](https://qdrant.tech/documentation/quick_start/)
+
+### Ollama Setup (for AI Chatbot)
+
+1. **Download and Install Ollama**
+   - Visit [ollama.ai](https://ollama.ai/download/windows)
+   - Download the Windows installer
+   - Run the installer
+
+2. **Download AI Models**
+   ```cmd
+   ollama pull llama2:7b-chat
+   ollama pull mistral:7b
    ```
 
-### Built-in Analytics
+3. **Verify Installation**
+   ```cmd
+   ollama list
+   curl http://localhost:11434/api/tags
+   ```
 
-Access analytics dashboard at `/dashboard` for:
-- Application volume and trends
-- Processing time metrics
-- Approval/decline rates
-- User satisfaction scores
+## Running the Application
 
-## 🛠️ Development
+### Method 1: Using the Application Runner (Recommended)
 
-### Project Structure
+The application includes a built-in runner script that handles both backend and frontend:
 
-```
-Social-support-system/
-├── src/
-│   ├── agents/           # AI agents and orchestration
-│   ├── api/             # FastAPI backend
-│   ├── config/          # Configuration management
-│   ├── database/        # Database connections
-│   ├── frontend/        # Streamlit UI
-│   ├── models/          # Data models
-│   ├── services/        # Business logic services
-│   └── utils/           # Utility functions
-├── data/
-│   ├── synthetic/       # Test data generation
-│   ├── uploads/         # Uploaded documents
-│   └── temp/           # Temporary files
-├── docs/               # Documentation
-├── tests/              # Test suites
-├── requirements.txt    # Python dependencies
-├── .env.example       # Environment template
-├── run_app.py         # Application runner
-└── README.md          # This file
+```cmd
+# Activate virtual environment (do this every time you start working)
+venv\Scripts\activate
+
+# Run full application (API + Frontend)
+python run_app.py
+
+# Alternative modes:
+python run_app.py --mode api          # API only
+python run_app.py --mode frontend     # Frontend only
+python run_app.py --mode setup        # Setup environment only
+python run_app.py --mode data         # Generate test data only
 ```
 
-### Adding New Features
+The application will be available at:
+- **Frontend (Streamlit)**: http://localhost:8501
+- **Backend API**: http://localhost:8000
+- **API Documentation**: http://localhost:8000/docs
 
-1. **New AI Agent**
-   ```python
-   # Create in src/agents/
-   from .base_agent import BaseAgent, AgentType, AgentResult
+### Method 2: Manual Startup
 
-   class NewAgent(BaseAgent):
-       def __init__(self, llm_client=None):
-           super().__init__(AgentType.NEW_TYPE, llm_client)
+If you prefer to start services separately:
 
-       async def process(self, input_data, context=None):
-           # Implementation
-           pass
-   ```
-
-2. **New API Endpoint**
-   ```python
-   # Add to src/api/main.py
-   @app.post("/api/new-endpoint")
-   async def new_endpoint(data: SomeModel):
-       # Implementation
-       pass
-   ```
-
-3. **New Document Type**
-   - Add processing logic to `DocumentProcessor`
-   - Update agent workflows
-   - Add UI components
-
-### Code Quality
-
-```bash
-# Code formatting
-black src/
-isort src/
-
-# Linting
-flake8 src/
-pylint src/
-
-# Type checking
-mypy src/
+#### Start Backend API
+```cmd
+venv\Scripts\activate
+uvicorn src.api.main:app --host localhost --port 8000 --reload
 ```
 
-## 🚀 Deployment
+#### Start Frontend (in a new Command Prompt window)
+```cmd
+cd C:\Users\devan\source\repos\socialAI\Social-support-system
+venv\Scripts\activate
+streamlit run src/frontend/streamlit_app.py --server.port 8501
+```
 
-### Production Deployment
+### Using the Web Interface
 
-1. **Docker Compose**
-   ```bash
-   docker-compose -f docker-compose.prod.yml up -d
+1. **Access the Application**
+   - **Frontend**: http://localhost:8501
+   - **API Documentation**: http://localhost:8000/docs
+   - **API Redoc**: http://localhost:8000/redoc
+
+2. **Submit New Application**
+   - Navigate to "New Application" page
+   - Fill in personal information
+   - Upload required documents (PDF, images)
+   - Review and submit
+
+3. **Track Application Status**
+   - Use "Application Status" page
+   - Enter Application ID and identifying information
+   - View real-time processing status
+
+4. **AI Assistant** (if Ollama is installed)
+   - Access via "AI Assistant" page
+   - Ask questions about eligibility, documents, process
+   - Get personalized guidance
+
+## Docker Deployment
+
+### Full Stack Deployment with Docker
+
+If you have Docker Desktop installed, you can run the entire application stack:
+
+1. **Build and start all services**:
+   ```cmd
+   docker-compose up --build
    ```
 
-2. **Kubernetes**
-   ```bash
-   kubectl apply -f k8s/
+2. **Run in detached mode**:
+   ```cmd
+   docker-compose up -d
    ```
 
-3. **Cloud Deployment**
-   - AWS: Use ECS or EKS
-   - Azure: Use Container Instances or AKS
-   - GCP: Use Cloud Run or GKE
+3. **View logs**:
+   ```cmd
+   docker-compose logs -f
+   ```
+
+4. **Stop all services**:
+   ```cmd
+   docker-compose down
+   ```
+
+### Accessing Services
+
+When using Docker deployment:
+- **Frontend**: http://localhost:8501
+- **Backend API**: http://localhost:8000
+- **API Docs**: http://localhost:8000/docs
+- **PostgreSQL**: localhost:5432
+- **MongoDB**: localhost:27017
+- **Neo4j Browser**: http://localhost:7474
+- **Qdrant Dashboard**: http://localhost:6333/dashboard
+
+## ML Model Training
+
+### Generate Training Data and Train Models
+
+```cmd
+# Activate virtual environment
+venv\Scripts\activate
+
+# Generate synthetic training data and train ML models
+python train_model.py
+```
+
+This will:
+1. Generate 800 synthetic application records
+2. Train multiple ML models for eligibility prediction
+3. Save the best performing model to the `models/` directory
+4. Display model performance metrics
+
+### Alternative Training Script
+```cmd
+python train_and_test_model.py
+```
+
+## API Documentation
+
+Once the application is running, you can access:
+
+- **Interactive API Docs (Swagger)**: http://localhost:8000/docs
+- **ReDoc Documentation**: http://localhost:8000/redoc
+
+### Key API Endpoints
+
+- `POST /applications/` - Submit new application
+- `GET /applications/{id}` - Get application by ID
+- `POST /applications/{id}/process` - Process application through AI agents
+- `POST /documents/upload` - Upload supporting documents
+- `GET /health` - Health check endpoint
+
+## Troubleshooting
+
+### Common Windows Issues
+
+#### Python/Pip Issues
+```cmd
+# If pip is not recognized
+python -m pip install --upgrade pip
+
+# If Python modules not found
+set PYTHONPATH=%CD%
+python run_app.py
+```
+
+#### Port Already in Use
+```cmd
+# Find process using port 8000
+netstat -ano | findstr :8000
+
+# Kill process (replace PID with actual process ID)
+taskkill /PID <PID> /F
+```
+
+#### Virtual Environment Issues
+```cmd
+# If activation script not working
+venv\Scripts\activate.bat
+
+# Or use PowerShell
+venv\Scripts\Activate.ps1
+```
+
+#### Database Connection Issues
+1. **PostgreSQL**: Ensure service is running
+   ```cmd
+   # Open Services management console
+   services.msc
+   # Look for "postgresql-x64-13" service
+   ```
+
+2. **MongoDB**: Ensure service is running
+   ```cmd
+   net start MongoDB
+   ```
+
+#### Docker Issues
+1. **Docker not starting**: Ensure Docker Desktop is running
+2. **Port conflicts**: Stop conflicting services or change ports in `docker-compose.yml`
+3. **Permission denied**: Run Command Prompt as Administrator
+
+#### Streamlit Issues
+```cmd
+# If Streamlit won't start
+streamlit --version
+pip install --upgrade streamlit
+
+# Clear Streamlit cache
+streamlit cache clear
+```
+
+#### Ollama Issues
+```cmd
+# If Ollama models aren't working
+ollama serve
+ollama list
+ollama pull llama2:7b-chat
+```
+
+### Logs and Debugging
+
+- Application logs: Check `logs/` directory
+- Docker logs: `docker-compose logs [service_name]`
+- Streamlit logs: Visible in terminal where Streamlit is running
+- FastAPI logs: Visible in uvicorn terminal
 
 ### Performance Optimization
 
-- **Database**: Use connection pooling, read replicas
-- **API**: Enable caching, use CDN for static assets
-- **AI Models**: Use model quantization, batch processing
-- **Monitoring**: Set up alerts and health checks
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make changes with tests
-4. Submit a pull request
-
-### Development Setup
-
-```bash
-# Install development dependencies
-pip install -r requirements-dev.txt
-
-# Setup pre-commit hooks
-pre-commit install
-
-# Run tests before committing
-pytest tests/
-```
-
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 🆘 Support
-
-### Common Issues
-
-1. **Ollama Connection Failed**
-   - Ensure Ollama is running: `ollama serve`
-   - Check model availability: `ollama list`
-
-2. **Database Connection Error**
-   - Verify database containers are running
-   - Check connection strings in `.env`
-
-3. **Document Upload Issues**
-   - Check file size limits
-   - Verify upload directory permissions
+#### For Windows Systems
+1. **Increase virtual memory** if running multiple databases
+2. **Disable Windows Defender** real-time scanning for project folder (temporary)
+3. **Close unnecessary applications** to free up memory
+4. **Use SSD storage** for better database performance
 
 ### Getting Help
 
-- **Issues**: Create an issue on GitHub
-- **Discussions**: Use GitHub Discussions
-- **Email**: support@example.com
+If you encounter issues:
+1. Check the [Troubleshooting](#troubleshooting) section above
+2. Review logs in the `logs/` directory
+3. Ensure all prerequisites are properly installed
+4. Verify database connections and services are running
+5. Try running `python run_app.py --mode setup` to reset the environment
 
-### Documentation
+## Project Structure
 
-- **API Reference**: http://localhost:8000/docs
-- **Architecture Guide**: `docs/architecture.md`
-- **Deployment Guide**: `docs/deployment.md`
-- **User Manual**: `docs/user-guide.md`
+```
+Social-support-system/
+├── src/                          # Source code
+│   ├── agents/                   # AI agents
+│   │   ├── eligibility_agent.py  # Eligibility assessment
+│   │   ├── document_extraction_agent.py
+│   │   ├── economic_enablement_agent.py
+│   │   └── orchestrator.py       # Agent coordination
+│   ├── api/                      # FastAPI backend
+│   │   └── main.py               # API endpoints
+│   ├── frontend/                 # Streamlit frontend
+│   │   └── streamlit_app.py      # Web interface
+│   ├── ml/                       # Machine learning
+│   │   └── model_trainer.py      # ML model training
+│   ├── models/                   # Data models
+│   ├── services/                 # Business logic
+│   ├── database/                 # Database connections
+│   └── config/                   # Configuration
+├── data/                         # Data storage
+│   ├── synthetic/                # Generated test data
+│   ├── uploads/                  # Uploaded files
+│   └── temp/                     # Temporary files
+├── models/                       # Trained ML models
+├── tests/                        # Unit tests
+├── docs/                         # Documentation
+├── config/                       # Configuration files
+├── docker-compose.yml            # Docker services
+├── requirements.txt              # Python dependencies
+├── run_app.py                    # Application runner
+├── train_model.py                # Model training script
+└── README.md                     # This file
+```
 
----
+## Additional Features
 
-## 🎯 Case Study Results
+### Ollama Setup (Local LLM for AI Features)
 
-This implementation demonstrates:
+1. **Download Ollama for Windows**:
+   - Visit [ollama.ai](https://ollama.ai/download/windows)
+   - Download Windows installer
 
-✅ **99% Automation Target**: Automated processing with human oversight only for edge cases
-✅ **Sub-minute Processing**: Average processing time of 2-3 minutes
-✅ **Multimodal AI**: Handles text, images, and tabular data
-✅ **Local LLM**: Privacy-compliant processing with Ollama
-✅ **Agent Orchestration**: Sophisticated workflow with LangGraph
-✅ **Comprehensive UI**: User-friendly Streamlit interface
-✅ **Production Ready**: Scalable architecture with monitoring
+2. **Install and pull models**:
+   ```cmd
+   ollama pull llama2:7b-chat
+   ollama pull mistral:7b
+   ```
 
-**Technology Stack Justification:**
-- **Local LLM (Ollama)**: Ensures data privacy and compliance
-- **LangGraph**: Provides robust agent orchestration with state management
-- **FastAPI**: High-performance API with automatic documentation
-- **Multi-database**: Optimized storage for different data types
-- **Streamlit**: Rapid UI development with AI-friendly components
+3. **Verify installation**:
+   ```cmd
+   ollama list
+   ```
 
-This solution addresses all core requirements while demonstrating practical AI implementation for government services.
+### Development Tools
+
+#### VS Code Extensions (Recommended)
+- Python
+- Docker
+- PostgreSQL Explorer
+- MongoDB for VS Code
+- Thunder Client (for API testing)
+
+#### Jupyter Notebook Support
+```cmd
+pip install jupyter
+jupyter notebook
+```
+
+## Quick Start Summary
+
+For a new user on Windows, here's the essential steps:
+
+1. **Install Prerequisites**: Python 3.8+, Git, Docker (optional)
+2. **Clone Repository**: `git clone <repo-url> && cd Social-support-system`
+3. **Setup Virtual Environment**: `python -m venv venv && venv\Scripts\activate`
+4. **Install Dependencies**: `pip install -r requirements.txt`
+5. **Setup Environment**: `copy .env.example .env` (edit with your settings)
+6. **Start Databases**: `docker-compose up postgres mongodb -d` (or install manually)
+7. **Run Application**: `python run_app.py`
+8. **Access Application**: http://localhost:8501
+
+## Support
+
+For issues and support:
+1. Check the [Troubleshooting](#troubleshooting) section
+2. Review logs in the `logs/` directory
+3. Ensure all prerequisites are properly installed
+4. Verify database connections and services are running
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
