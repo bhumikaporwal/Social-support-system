@@ -127,11 +127,13 @@ def main():
         page = st.selectbox(
             "Select Page",
             ["🏠 Home", "📝 New Application", "💬 AI Assistant", "📊 Dashboard", "📋 Application Status", "ℹ️ Help"],
-            index=["🏠 Home", "📝 New Application", "💬 AI Assistant", "📊 Dashboard", "📋 Application Status", "ℹ️ Help"].index(st.session_state.page_selection)
+            index=["🏠 Home", "📝 New Application", "💬 AI Assistant", "📊 Dashboard", "📋 Application Status", "ℹ️ Help"].index(st.session_state.page_selection),
+            key="page_selectbox"
         )
 
-        # Update session state when selectbox changes
-        st.session_state.page_selection = page
+        # Only update session state when selectbox actually changes (not on rerun)
+        if page != st.session_state.page_selection:
+            st.session_state.page_selection = page
 
     # Route to different pages
     if page == "🏠 Home":
@@ -169,6 +171,8 @@ def home_page():
 
         if st.button("Start New Application", type="primary", use_container_width=True):
             st.session_state.page_selection = "📝 New Application"
+            # Reset application step to ensure we start from step 1
+            st.session_state.application_step = 1
             st.rerun()
 
     with col2:
